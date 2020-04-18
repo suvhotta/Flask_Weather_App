@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+        <title>
+            {%if title%}
+                {{title}}
+            {%else%}
+                What is the weather like?
+            {%endif%}
+        </title>
+    </head>
+    <body>
+        <div class="container">
+        <h1>Enter City Details</h1>
+        <form action="" method="POST">
+            {{form.hidden_tag()}}
+            <p>
+                {{form.city_name.label}}<br>
+                {{form.city_name(size=32)}}
+                {%with messages = get_flashed_messages()%}
+                    {%if messages%}
+                        {%for message in messages%}
+                        <div class="alert alert-danger" role="alert" id="notification">
+                            {{ message }}
+                        </div>
+                        {%endfor%}
+                    {%endif%}
+                {%endwith%}
+                {%for error in form.city_name.errors%}
+                <div class="alert alert-danger" role="alert">
+                    {{ error }}
+                </div>
+                {%endfor%}
+            </p>
+            <p>{{form.submit()}}</p>
+        </form>
+
+        <div class="card-columns">
+            {%for weather in weather_data%}
+            <div class="card">
+                <div class="media">
+                    <img src="http://openweathermap.org/img/wn/{{weather.icon}}@2x.png" class="mr-3" alt="...">
+                    <div class="card-body">
+                        <h5 class="card-title">{{weather.city}}</h5>
+                        <p class="card-text">{{weather.description}}</p>
+                        <p class="card-text">Temp:{{weather.temp.avg}}° C</p>
+                        <small class="card-text"><small class="text-muted">Temp-max: {{weather.temp.max_temp}}° C , Temp-min: {{weather.temp.min_temp}}° C</small></p>  
+                        {#Since HTML Forms don't accept anything apart from GET/POST Requests,
+                        Hence Faking a POST request below so that it can act like a delete.
+                        The value=DELETE here means that it is a delete request. for that to happen a hidden input is to submitted. #}
+                        <form action="{{url_for('remove_city', city_name=weather.city)}}" method="POST">
+                            <input type="hidden" name="_method" value="DELETE">
+                            <input type="submit" class="btn btn-danger" value="Remove">
+                        </form>
+                      </div>
+                  </div>
+            </div>
+            {%endfor%}
+        </div>
+    </div>
+    </body>
+
+<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+<script>
+    setTimeout(()=>document.querySelector('#notification').remove(),2300)
+</script>
+</html>
+
