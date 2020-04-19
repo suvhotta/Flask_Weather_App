@@ -5,9 +5,9 @@ from weather_app.weather_models import City
 
 
 class CityForm(FlaskForm):
-    city_name = StringField('City Name', render_kw={"placeholder":"Enter the City Name"}, 
+    city_name = StringField('City Name', render_kw={"placeholder":"Enter the City Name", "class":"typeahead"}, 
     validators=[DataRequired(),Length(min=1,max=30)])
-    submit = SubmitField('Add')
+    submit = SubmitField('Add', render_kw={"class":"btn btn-primary mb-2"})
 
     def validate_city_name(self, city_name):
         city = City.query.filter_by(city_name = city_name.data).first()
